@@ -1,81 +1,63 @@
-from app import app,login
+from app import app
 from flask import render_template, flash, redirect,url_for,request
-from app.forms import LoginForm,RegisterationForm
-import pymongo
-from flask_login import login_user,current_user,UserMixin,logout_user,login_required 
-from werkzeug.security import generate_password_hash,check_password_hash
-from werkzeug.urls import url_parse
-from bson.objectid import ObjectId
+from app.forms import SearchForm
+from urllib.request import urlopen
 
-@app.route('/',methods=['GET']) 
-@app.route('/index', methods=['GET'])
+def response(host,username):
+    if host[-1] != "/":
+        host = host + "/"
+    if host[0:4] != "http":
+        host = "https://" + host
+
+    try:
+        conn = urlopen(host+username)
+        return "unavailable" if str(conn.getcode()) == "200"  else 0
+    except Exception as e:
+        return "available" if str(e)[11:14] == "404" else 0
+
+@app.route('/',methods=['GET','POST']) 
+@app.route('/index', methods=['GET','POST'])
 def index():
-    return render_template('index.html', title="Home")
-
-@app.route('/register',methods=['GET','POST'])
-def register():
-    #if current_user.is_authenticated:
-    #    return(url_for('index'))
-    form = RegisterationForm()
+    form = SearchForm()
     if form.validate_on_submit():
-        myclient = pymongo.MongoClient("mongodb://localhost:27017")
-        mydb = myclient["mydatabase"]
-        mycol = mydb["users"]
-        myquery = {"email":form.email.data}
-        mydoc = mycol.find_one(myquery)
-        if mydoc:
-            flash('Email address already exist!') 
-            myclient.close()
-            return redirect(url_for('register'))
-        myquery = {"username":form.username.data}
-        mydoc = mycol.find_one(myquery)
-        if mydoc:
-            flash('Username already exist!')
-            myclient.close()
-            return redirect(url_for('register'))
-        hashedpass = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12)
-        mydict = { "username":form.username.data, "email": form.email.data,"password":hashedpass}
-        x = mycol.insert_one(mydict)
-        flash('Congratulations, you are now a registered user!')
-        myclient.close()
-        return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
-
-@app.route('/login', methods=['GET','POST'])
-def login():
-    #if current_user.is_authenticated:
-    #    return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        myclient = pymongo.MongoClient("mongodb://localhost:27017")
-        mydb = myclient["mydatabase"]
-        mycol = mydb["users"]
-        myquery = {"username":form.username.data}
-        mydoc = mycol.find_one(myquery)
-        print(mydoc)
-        myclient.close()
-        if mydoc == None:
-            flash('Username not found! Do you want to register?')
-            return redirect(url_for('login'))
-        else:
-            if check_password_hash(mydoc["password"], form.password.data) == False:
-                flash('Invalid Password')
-                return redirect(url_for('login'))
+        post = {"username":form.username.data}
+        if form.facebook.data:
+            out=response("https://facebook.com/",form.username.data)
+            if out == 0:
+                post ["facebook"]= "Error"
             else:
-                user = User()
-                user.id = mydoc["_id"] 
-                user.name = form.username.data
-                login_user(user, remember = form.remember_me.data) 
-                next_page = request.args.get('next')
-                if not next_page or url_parse(next_page).netloc != '':
-                    next_page = url_for('index')
-                return redirect(next_page) 
-    return render_template('login.html',title='Sign In', form=form)
-
-@app.route("/<username>", methods=['GET'])
-def userpage(username):
-    return render_template('user.html', title=username)
-    
-@app.route("/image/<imgid>", methods=['GET'])
-def image(imgid):
-    return render_template('image.html')
+                post ["facebook"]= out
+        if form.soundcloud.data:
+            out=response("https://soundcloud.com/",form.username.data)
+            if out == 0:
+                post["soundcloud"]= "Error"
+            else:
+                post["soundcloud"]=out
+        if form.github.data:
+            out=response("https://github.com/",form.username.data)
+            if out == 0:
+                post["github"]= "Error"
+            else:
+                post["github"] = out
+        if form.instagram.data:
+            out=response("https://instagram.com/",form.username.data)
+            if out == 0:
+                post["instagram"]= "Error"
+            else:
+                post["instagram"] = out
+        if form.twitter.data:
+            out=response("https://twitter.com/",form.username.data)
+            if out == 0:
+                post["twitter"]= "Error"
+            else:
+                post["twitter"]=out
+        if form.othersite.data:
+            out=response(form.othersite.data,form.username.data)
+            post["site"]=form.othersite.data
+            if out == 0:
+                post["othersite"]= "Error"
+            else:
+                post["othersite"] = out
+        print (post)
+        return render_template('out.html', title="Result",posts=post)
+    return render_template('index.html', title="Home",form=form)

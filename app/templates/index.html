@@ -1,5 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Hi!</h1>
-<p>Welcome to Photo Spaze</p>
-{% endblock %}
+<h1> Register</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.username.label }}
+        {{ form.username() }}<br>
+        {% for error in form.username.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.facebook() }}
+        {{ form.facebook.label }}<br>
+        {% for error in form.facebook.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.github() }}
+        {{ form.github.label }}<br>
+        {% for error in form.github.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.soundcloud() }}
+        {{ form.soundcloud.label }}<br>
+        {% for error in form.soundcloud.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.twitter() }}
+        {{ form.twitter.label }}<br>
+        {% for error in form.twitter.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.instagram() }}
+        {{ form.instagram.label }}<br>
+        {% for error in form.instagram.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.othersite.label }}
+        {{ form.othersite() }} <br>
+        {% for error in form.othersite.errors %}
+        <span style="color: red;">[{{ error}}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>{% endblock %}
