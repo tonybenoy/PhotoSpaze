@@ -4,39 +4,39 @@
 {% if posts.facebook=="Error" %}
 <p>Some error occured for Facebook please try after sometime</p>
 {% elif posts.facebook%}
-<p> For Facebook the username {{post.username}} is {{ posts.facebook }}</p>\
+<p> For Facebook the username {{posts.username}} is {{ posts.facebook }}</p>\
 {% endif %}
 
 
 {% if posts.instagram=="Error" %}
 <p>Some error occured for Instagram please try after sometime</p>
 {% elif posts.instagram%}
-<p> For Instagram the username {{post.username}} is {{ posts.instagram }}</p>\
+<p> For Instagram the username {{posts.username}} is {{ posts.instagram }}</p>\
 {% endif %}
 
 {% if posts.twitter=="Error" %}
 <p>Some error occured for Twitter please try after sometime</p>
 {% elif posts.twitter%}
-<p> For Twitter the username {{post.username}} is {{ posts.twitter }}</p>\
+<p> For Twitter the username {{posts.username}} is {{ posts.twitter }}</p>\
 {% endif %}
 
 {% if posts.github=="Error" %}
 <p>Some error occured for Github please try after sometime</p>
 {% elif posts.github%}
-<p> For Github the username {{post.username}} is {{ posts.github }}</p>\
+<p> For Github the username {{posts.username}} is {{ posts.github }}</p>\
 {% endif %}
 
 {% if posts.soundcloud=="Error" %}
 <p>Some error occured for Soundcloud please try after sometime</p>
 {% elif posts.soundcloud%}
-<p> For Soundcloud the username {{post.username}} is {{ posts.soundcloud }}</p>\
+<p> For Soundcloud the username {{posts.username}} is {{ posts.soundcloud }}</p>\
 {% endif %}
 
 
 {% if posts.othersite=="Error" %}
-<p>Some error occured {{post.site}} you provided or the website maybe incorrect please check the URL or try after
+<p>Some error occured {{posts.site}} you provided or the website maybe incorrect please check the URL or try after
     sometime</p>
 {% elif posts.othersite%}
-<p> For {{post.site}} the username {{post.username}} is {{ posts.othersite }}</p>\
+<p> For {{posts.site}} the username {{posts.username}} is {{ posts.othersite }}</p>\
 {% endif %}
 {% endblock %}
